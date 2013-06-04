@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>List of the books (converter)</title>
+</h:head>
+<h:body>
+ 	<!--
+ 		書籍一覧画面
+ 	 
+		登録済みの書籍情報の一覧を表形式で表示する。
+		
+		価格（Price）の表示に、標準コンバータf:convertNumberを
+		使って表示形式を指定している。
+	 -->
+    <h1>List of the books</h1>
+    <hr/>
+    <h:dataTable value="#{bookControllerWithConverter.bookList}" var="bk" border="1">
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="ISBN"/>
+            </f:facet>
+            <h:outputText value="#{bk.isbn}"/>
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="Title"/>
+            </f:facet>
+            <h:outputText value="#{bk.title}"/>
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="Price"/>
+            </f:facet>
+            <h:outputText value="#{bk.price}">
+				<!-- 
+					出版価格の表示フォーマットを
+					<f:convertNumber>タグを使用して指定。
+					
+					type属性をcurrencyとすると、数値データが通貨表記に用いるものと
+					してフォーマットが行われる。
+					
+					currencySymbol属性で通貨シンボルを、
+					maxIntegerDigitsで整数部分の最大桁数を、
+					maxFractionDigitsで小数部分の最大桁数を、
+					minFractionDigitsで小数部分の最小桁数をそれぞれ指定する。				
+				 -->
+				<f:convertNumber 
+					currencySymbol="$" type="currency" maxIntegerDigits="3" 
+					maxFranctionDigits="2" minFractionDigits="2" />
+            </h:outputText>
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="Description"/>
+            </f:facet>
+            <h:outputText value="#{bk.description}"/>
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="Number Of Pages"/>
+            </f:facet>
+            <h:outputText value="#{bk.nbOfPage}"/>
+        </h:column>
+
+        <h:column>
+            <f:facet name="header">
+                <h:outputText value="Illustrations"/>
+            </f:facet>
+            <h:outputText value="#{bk.illustrations}"/>
+        </h:column>
+
+    </h:dataTable>
+    <h:form>
+        <h:link outcome="newBook.xhtml" value="Create a new book"/>
+    </h:form>
+    <hr/>
+    <i>APress - Beginning Java EE 6</i>
+</h:body>
+</html>

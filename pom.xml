@@ -1,0 +1,204 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.beginningee6.book</groupId>
+	<artifactId>beginningee6-chapter12-jsf</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<name>beginningee6-chapter12-jsf Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+
+	<!-- 
+		コンパイルされるソースコードのエンコーディング形式の前提として
+		UTF-8を設定する
+	 -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<build>
+		<!-- 
+			mvn packageにより生成されるWARパッケージの名前を明示的に設定する。
+			
+			生成されるWARパッケージの名前は、「（設定値）.war」となる。
+			→実際のファイル名は、beginningee6-chapter12-jsf.war
+			
+			この設定を行わない場合はのWARパッケージの名前は、
+			「<artifact id>-<version>.war」となる。
+			→実際のファイル名は、beginningee6-chapter12-jsf-0.0.1-SNAPSHOT.war
+		 -->
+		<finalName>beginningee6-chapter12-jsf</finalName>
+		<plugins>
+			<!-- 
+				maven-compiler-plugin
+				
+				MavenでJavaソースコードのコンパイルを実行するために
+				必要なプラグイン。
+				
+				Java SE 1.6に準拠したソースコードとしてコンパイルし、
+				java SE 1.6のJava VMで動作する中間コードを生成する
+				ように設定する
+				
+				なお、最終的に生成されるWARアーカイブでは、コンパイルされた
+				classファイルは、WEB-INF/classesに配置される。
+			 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<!-- 
+				maven-war-plugin
+				
+				MavenでWARパッケージの生成を実行するために
+				必要なプラグイン。
+			 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.3</version>
+				<!-- 
+					WARパッケージの生成方法に関する設定を行う。
+					
+					なお、このWebアプリケーションが利用するJPAライブラリには、
+					本番環境用の永続化ユニットの定義がされており、この永続化
+					ユニットが依存する本番環境用のデータソースの名前（JNDI名）
+					が指定されているが、データベースをこのデータソース名で
+					実際に接続する設定は含まれていない。
+					
+					このため、WEB-INFフォルダにデータソースの設定ファイルとして
+					jbossas-ds.xmlを用意しておき、本番環境用のデータソースが
+					デプロイ時に自動生成され、データベースに接続されるようにしてある。
+				 -->
+				<configuration>
+					<!-- 
+						dependencyタグで記述された、scopeがcompileに
+						設定されているJARライブラリ、つまり、この
+						JSFアプリケーションが実行時に必要とする
+						JARライブラリは、通常WEB-INF/libフォルダに
+						配置される。
+						
+						このWebアプリケーションは、
+						アーティファクトbeginningee6-chapter10-ear-lib
+						に依存し、さらにこのアーティファクトから以下の
+						2つのライブラリに依存しているため、この2つの
+						ライブラリのJARファイルがWEB-INF/libフォルダに
+						配置されることになる。
+						
+						・EJBライブラリ：beginningee6-chapter10-ejb
+						・JPAライブラリ：beginningee6-chapter10-jpa
+						
+						しかし、このWebアプリケーションは、上位のEAR
+						アーカイブの一部としてパッケージングし、かつ、
+						依存するこの2つのライブラリはEARパッケージの
+						ライブラリフォルダ（lib/フォルダ）に配置し、
+						Webアプリケーションからはこのフォルダのライブラリを
+						クラスパスの一部として参照させるようにしているため、
+						明示的にWEB-INF/libフォルダには依存ライブラリを
+						配置しないように設定している。
+					 -->
+					<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+					<!-- 
+						上述のpackagingExcludesタグの説明にある通り、
+						このWebアプリケーションが依存するEJB/JPAライブラリは
+						WEB-INF/libフォルダには含めず、代わりにEARパッケージの
+						ライブラリフォルダに配置することを想定している。
+						
+						単にフォルダ配置を変更するだけではEARパッケージの
+						ライブラリフォルダにあるJARファイルをクラスパスにある
+						ものとして認識することはできない。
+						
+						このため、クラスパス上にあるJARファイルとして認識させる
+						ためにマニフェストファイル（MANIFEST.MF）を作成し、
+						そのクラスパス設定でEARパッケージのライブラリフォルダに
+						配置したEJB/JPAライブラリのファイル名を明示的に出力
+						する設定を行う。
+					 -->
+					<archive>
+						<manifest>
+							<!-- 
+								MANIFEST.MFファイルを生成するように設定
+							 -->
+							<addClasspath>true</addClasspath>
+							<!-- 
+								MANIFEST.MFファイルのClass-Path属性に
+								書き出すEJB/JPAライブラリのJARファイル名
+								の先頭にEARパッケージのライブラリフォルダの
+								パス（lib/）を付加する。
+								
+								この結果、Class-Path属性の出力結果は、
+								以下の通りとなる。
+								
+								Class-Path: lib/beginningee6-chapter10-jpa-0.0.1-SNAPSHOT.jar lib/begi
+								 nningee6-chapter10-ejb-0.0.1-SNAPSHOT.jar
+							 -->
+							<classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!-- 
+		作成したソースコードをコンパイル、実行するために必要となるライブラリを
+		依存関係として設定する。
+		
+		※EJB/JPAライブラリとは異なりJUnitによる単体テストやArquillianによる
+		　インテグレーションテストは行わないため、これらの依存ライブラリに
+		　対する依存関係は設定しない。
+	 -->
+	<dependencies>
+		<!-- 	================================================= 
+			　　プログラムをコンパイルするためのライブラリ設定 
+				================================================= -->
+		<!-- 
+			JavaEE6のAPI
+			
+			@ManagedBeanなどのJSFのアノテーションを含むマネージドBeanの
+			コンパイルに必要である。
+			
+			マネージドBeanはJBossのAPサーバで動作させることを想定
+			しているが、この場合はAPサーバによってJavaEE6のAPIが提供
+			されるため、EARやWARとしてパッケージングされるアプリケー
+			ションにはこのJARファイルを含める必要はない。
+
+			従って、scopeはprovidedとする。
+		-->
+		<dependency>
+			<groupId>org.jboss.spec</groupId>
+			<artifactId>jboss-javaee-6.0</artifactId>
+			<version>1.0.0.Final</version>
+			<type>pom</type>
+			<scope>provided</scope>
+		</dependency>
+		<!--  
+			JPAで実装するデータアクセス層のライブラリや、
+			EJBで実装するビジネスロジック層のライブラリ。
+			
+			このプロジェクトで作成するWebアプリケーションはEJBライブラリの
+			機能を使って実現されているため、EJBライブラリに対する依存関係の
+			設定がまず必要である。
+			
+			さらに、EJBライブラリはJPAライブラリの機能を使ってデータベース
+			アクセスを実現しているため、JPAライブラリに対する依存関係の設定
+			も必要である。
+			
+			ここでは、個々のライブラリを依存関係として設定する手間を
+			省くために、これらの2つのライブラリへの依存関係がまとめて
+			設定されたMavenプロジェクト：beginningee6-chapter10-ear-lib
+			を依存関係のエイリアスとして設定する。
+		-->
+		<dependency>
+			<groupId>org.beginningee6.book</groupId>
+			<artifactId>beginningee6-chapter10-ear-lib</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>pom</type>
+		</dependency>
+	</dependencies>
+</project>

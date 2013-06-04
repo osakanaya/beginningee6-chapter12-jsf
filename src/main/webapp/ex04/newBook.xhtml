@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<!-- 
+	書籍登録画面
+		
+	1件の書籍情報を登録するための入力フォームを表示する。
+
+	この画面では、2つの方法を利用して入力値の検証を行っている。
+
+	・標準バリデータを使用して、書籍のタイトルと価格の入力値を検証する
+	・カスタムバリデータ：isbnValidatorを使用して、ISBN番号の入力値を検証する
+ -->
+<h:head>
+    <title>Creates a new book (validator)</title>
+</h:head>
+<h:body>
+    <h1>Create a new book</h1>
+    <hr/>
+    <h:form>
+        <table border="0">
+            <tr>
+                <td>
+                    <h:outputLabel value="ISBN : "/>
+                </td>
+                <td>
+                	<!-- 
+                		カスタムバリデータ：isbnValidatorによりISBNの入力値を
+                		検証する。
+                		
+                		validator属性にバリデータID：isbnValidatorを指定する。
+                	 -->
+                    <h:inputText id="isbn" value="#{bookController.book.isbn}" validator="isbnValidator"/>
+                    <!-- 以下のように記述してもよい -->
+                    <!--<h:inputText value="#{bookController.book.isbn}">-->
+                    <!--<f:validator validatorId="isbnValidator" />-->
+                    <!--</h:inputText>-->
+                </td>
+                <td>
+                	<!-- ISBN番号の入力エラーメッセージを表示 -->
+                	<h:message id="msgISBN" for="isbn" style="color: red" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h:outputLabel value="Title :"/>
+                </td>
+                <td>
+                	<!-- 
+                		標準バリデータによるTitleの入力値の検証。
+                		        		
+                		・required属性による入力必須指定。
+                		・validateLengthバリデータによる文字列長の最大値と最小値の指定。
+                	 -->
+                    <h:inputText id="title" value="#{bookController.book.title}" required="true">
+                        <f:validateLength minimum="2" maximum="20"/>
+                    </h:inputText>
+                </td>
+                <td>
+                	<!-- タイトルの入力エラーメッセージを表示 -->
+                	<h:message id="msgTitle" for="title" style="color: red" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h:outputLabel value="Price : "/>
+                </td>
+                <td>
+                	<!-- 
+                		標準バリデータによるPriceの入力値の検証。
+                		        		
+                		・required属性による入力必須指定。
+                		・f:validateLongRangeバリデータによる数値の最大最小指定。
+                	 -->
+                    <h:inputText id="price" value="#{bookController.book.price}" required="true">
+                        <f:validateLongRange minimum="1" maximum="500"/>
+                    </h:inputText>
+                </td>
+                <td>
+                	<!-- 価格の入力エラーメッセージを表示 -->
+                	<h:message id="msgPrice" for="price" style="color: red" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h:outputLabel value="Description  : "/>
+                </td>
+                <td>
+                    <h:inputTextarea value="#{bookController.book.description}" cols="20" rows="5"/>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    <h:outputLabel value="Number of pages : "/>
+                </td>
+                <td>
+                    <h:inputText value="#{bookController.book.nbOfPage}"/>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    <h:outputLabel value="Illustrations : "/>
+                </td>
+                <td>
+                    <h:selectBooleanCheckbox value="#{bookController.book.illustrations}"/>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+
+        <h:commandButton value="Create a book" action="#{bookController.doCreateBook}"/>
+
+    </h:form>
+    <hr/>
+    <i>APress - Beginning Java EE 6</i>
+
+</h:body>
+</html>

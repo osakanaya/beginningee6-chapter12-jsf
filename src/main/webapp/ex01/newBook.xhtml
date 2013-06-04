@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+	書籍登録画面
+		
+	1件の書籍情報を登録するための入力フォームを表示する。
+	
+	マネージドBean：BookControllerWithMessageにて
+	実行した入力チェックや書籍登録処理でのエラー
+	により登録されたエラーメッセージを表示する例を
+	示している。
+	
+	マネージドBeanでは、FacesContext.addMessage()を
+	実行することにより、画面に表示するメッセージを
+	登録することができるようになっている。
+	
+	マネージドBeanににより登録されたエラーメッセージは、
+	XHTMLページの中では<h:message>タグおよび<h:messages>
+	タグでマークされた箇所に表示される。
+	
+	■<h:message>タグ
+	
+	<h:message>タグは、特定の1つの入力コンポーネントに
+	対するメッセージを出力するために用いるタグで、
+	
+	<h:message for="isbn" />
+	
+	のようにfor属性に入力コンポーネントのid属性の値を
+	設定することで、入力コンポーネントとメッセージの
+	表示箇所を紐づけるようになっている。
+
+	なお、マネージドBean側からはFacesContext.addMessage()の
+	第1引数にメッセージを表示する対象となる入力コンポーネントの
+	IDを指定するようになっている。
+	
+	この入力コンポーネントがフォーム（h:form）の内側に
+	配置されている場合、(h:formのid):(入力コンポーネントのid)
+	という形式で第1引数を指定する必要があるため、必ず
+	<h:form>タグにはid属性でそのIDを付与しておく必要がある。
+
+	■<h:messages>タグ
+
+	一方、<h:messages>タグは、特定の1つの入力コンポーネント
+	には依存しない、複数の入力コンポーネントにまたがる
+	入力チェックのエラーメッセージや業務処理のエラー
+	もしくは正常終了をユーザに伝えるためのメッセージとして
+	使用する。	
+ -->
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<title>Creates a new book (navigation)</title>
+</h:head>
+<h:body>
+	<h1>Create a new book</h1>
+	<hr />
+	<!-- 
+		idが "bookForm" であるフォーム。
+	 -->
+	<h:form id="bookForm">
+		<table border="0">
+			<tr>
+				<!-- 
+					特定の入力コンポーネントに依存しないエラーメッセージを
+					表示するエリア。
+					
+					マネージドBean：BookControllerWithMessageでBookエンティティの
+					永続化ができない場合にエラーメッセージがここに表示される。
+				 -->
+				<td colspan="3"><h:messages showDetail="true"
+						errorStyle="color: red" warnStyle="color: orange"
+						infoStyle="color: blue" globalOnly="true" /></td>
+			</tr>
+			<tr>
+				<td><h:outputLabel value="ISBN : " /></td>
+				<td><h:inputText id="isbn"
+						value="#{bookControllerWithMessage.book.isbn}" /></td>						
+				<!-- 
+					書籍のISBN番号の入力コンポーネント（idがisbnのh:inputTextタグ）
+					に対するエラーメッセージを表示するエリア。
+
+					未入力の場合にここにエラーメッセージが表示される。					
+				 -->
+				<td><h:message id="msgISBN" for="isbn" /></td>
+			</tr>
+			<tr>
+				<td><h:outputLabel value="Title :" /></td>
+				<td><h:inputText id="title"
+						value="#{bookControllerWithMessage.book.title}" /></td>
+						
+				<!-- 
+					書籍のタイトルの入力コンポーネント（idがtitleのh:inputTextタグ）
+					に対するエラーメッセージを表示するエリア。
+
+					未入力の場合にここにエラーメッセージが表示される。					
+				 -->
+				<td><h:message id="msgTitle" for="title" /></td>
+			</tr>
+			<tr>
+				<td><h:outputLabel value="Price : " /></td>
+				<td><h:inputText id="price"
+						value="#{bookControllerWithMessage.book.price}" /></td>
+						
+				<!-- メッセージ表示エリア -->
+				<td><h:message id="msgPrice" for="price" /></td>
+			</tr>
+			<tr>
+				<td><h:outputLabel value="Description  : " /></td>
+				<td><h:inputTextarea id="description"
+						value="#{bookControllerWithMessage.book.description}" cols="20" rows="5" />
+				</td>
+				
+				<!-- メッセージ表示エリア -->
+				<td><h:message id="msgDescription" for="description" /></td>
+			</tr>
+			<tr>
+				<td><h:outputLabel value="Number of pages : " /></td>
+				<td><h:inputText id="nbOfPage"
+						value="#{bookControllerWithMessage.book.nbOfPage}" /></td>
+						
+				<!-- メッセージ表示エリア -->
+				<td><h:message id="msgNbOfPage" for="nbOfPage" /></td>
+			</tr>
+			<tr>
+				<td><h:outputLabel value="Illustrations : " /></td>
+				<td><h:selectBooleanCheckbox id="illustrations"
+						value="#{bookControllerWithMessage.book.illustrations}" /></td>
+						
+				<!-- メッセージ表示エリア -->
+				<td><h:message id="msgIllustrations" for="illustrations" /></td>
+			</tr>
+		</table>
+
+		<h:commandButton value="Create a book"
+			action="#{bookControllerWithMessage.doCreateBook}" />
+
+	</h:form>
+	<hr />
+	<i>APress - Beginning Java EE 6</i>
+
+</h:body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+	書籍登録画面
+		
+	1件の書籍情報を登録するための入力フォームを表示する。
+	
+	出版日付（Published Date）と出版価格（Published Price）の
+	表示に、標準コンバータf:convertDateTimeとf:convertNumberを
+	使って表示形式を指定している。
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<title>Creates a new book (converter)</title>
+</h:head>
+<h:body>
+	<h1>Create a new book</h1>
+	<hr />
+	<h:form>
+		<table border="0">
+			<tr>
+				<td><h:outputLabel value="ISBN : " /></td>
+				<td><h:inputText value="#{bookControllerWithConverter.book.isbn}" /></td>
+			</tr>
+			<tr>
+				<td><h:outputLabel value="Title :" /></td>
+				<td><h:inputText value="#{bookControllerWithConverter.book.title}" /></td>
+			</tr>
+			<tr>
+				<td><h:outputLabel value="Price : " /></td>
+				<td><h:inputText value="#{bookControllerWithConverter.book.price}" /></td>
+			</tr>
+			<tr>
+				<td><h:outputLabel value="Description  : " /></td>
+				<td><h:inputTextarea
+						value="#{bookControllerWithConverter.book.description}" cols="20" rows="5" />
+				</td>
+			</tr>
+			<tr>
+				<td><h:outputLabel value="Number of pages : " /></td>
+				<td><h:inputText value="#{bookControllerWithConverter.book.nbOfPage}" />
+				</td>
+			</tr>
+			<tr>
+				<td><h:outputLabel value="Illustrations : " /></td>
+				<td><h:selectBooleanCheckbox
+						value="#{bookControllerWithConverter.book.illustrations}" /></td>
+			</tr>
+			<tr>
+				<td><h:outputLabel value="Published Date : " /></td>
+				<td><h:outputLabel value="#{bookControllerWithConverter.publishedDate}">
+						<!-- 
+							出版日付の表示フォーマットを
+							<f:convertDateTime>タグを使用して指定。
+							
+							pattern属性により具体的なフォーマットを指定する。
+						 -->
+						<f:convertDateTime pattern="MM/dd/yy" />
+						
+					</h:outputLabel></td>
+			</tr>
+			<tr>
+				<td><h:outputLabel value="Published Price : " /></td>
+				<td><h:outputLabel value="#{bookControllerWithConverter.publishedPrice}">
+						<!-- 
+							出版価格の表示フォーマットを
+							<f:convertNumber>タグを使用して指定。
+							
+							type属性をcurrencyとすると、数値データが通貨表記に用いるものと
+							してフォーマットが行われる。
+							
+							currencySymbol属性で通貨シンボルを、
+							maxIntegerDigitsで整数部分の最大桁数を、
+							maxFractionDigitsで小数部分の最大桁数を、
+							minFractionDigitsで小数部分の最小桁数をそれぞれ指定する。
+							
+						 -->
+						<f:convertNumber currencySymbol="$" type="currency"
+							maxIntegerDigits="3" maxFranctionDigits="2" minFractionDigits="2" />
+							
+					</h:outputLabel></td>
+			</tr>
+		</table>
+
+		<h:commandButton value="Create a book"
+			action="#{bookControllerWithConverter.doCreateBook}" />
+
+	</h:form>
+	<hr />
+	<i>APress - Beginning Java EE 6</i>
+
+</h:body>
+</html>

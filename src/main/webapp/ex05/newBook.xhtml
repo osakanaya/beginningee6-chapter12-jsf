@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+	Ajaxを使用した部分的なページの更新を示したサンプル。
+	
+	<f:ajax>タグにより、サーバにリクエストを行う際に、
+	レスポンスとしてページ全体ではなく、
+	部分的な再描画を行う為のデータ（XMLやJSON)を
+	含むレスポンスを受け取ってレンダリングを行う。
+			
+	ここでは、書籍情報の入力部分で入力後、サブミットボタンを
+	押下すると、書籍情報の一覧の部分が更新される。
+ -->
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+<h:head>
+	<title>Creates a new book</title>
+</h:head>
+<h:body>
+
+	<!-- 
+		登録する書籍情報の入力フォームを表示する部分。
+	 -->
+	<h1>Creates a new book</h1>
+	<hr />
+
+	<h:form id="form" prependId="false">
+		<h:panelGrid columns="2">
+			<h:outputLabel value="ISBN : " />
+			<h:inputText id="isbn" value="#{bookControllerWithAjax.book.isbn}" />
+
+			<h:outputLabel value="Title :" />
+			<h:inputText id="title" value="#{bookControllerWithAjax.book.title}" />
+
+			<h:outputLabel value="Price : " />
+			<h:inputText id="price" value="#{bookControllerWithAjax.book.price}" />
+
+			<h:outputLabel value="Description : " />
+			<h:inputTextarea id="description"
+				value="#{bookControllerWithAjax.book.description}" cols="20" rows="5" />
+
+			<h:outputLabel value="Number of pages : " />
+			<h:inputText id="nbOfPage"
+				value="#{bookControllerWithAjax.book.nbOfPage}" />
+
+			<h:outputLabel value="Illustrations : " />
+			<h:selectBooleanCheckbox id="illustrations"
+				value="#{bookControllerWithAjax.book.illustrations}" />
+		</h:panelGrid>
+
+		<!-- 
+			サブミットボタン。
+			
+			ボタンのクリックにより、アクションメソッドdoCreateBookを実行する
+			ようにサーバへリクエストが送信されるが、<f:ajax>タグにより
+			レスポンスとして部分的なデータを受け取って画面の一部分のみが動的に
+			レンダリングされるようになる。
+			
+			execute属性に"＠form"を指定することにより、フォーム内の全ての
+			コンポーネントを実行対象（サーバに送信する対象）に指定される。
+			
+			render属性に":booklist"を指定することにより、idが"booklist"
+			であるh:dataTableの表がレンダリング対象（サーバからの受信
+			を反映する対象）となっている。
+		 -->
+		<h:commandButton value="Create a book"
+			action="#{bookControllerWithAjax.doCreateBook}">			
+			<f:ajax execute="@form" render=":booklist" />			
+		</h:commandButton>
+
+	</h:form>
+
+	<hr />
+	
+	<!-- 
+		登録されている書籍情報を一覧表示する部分。
+	 -->
+	<h1>List of the books</h1>
+	<hr />
+	<!-- 
+		idが"booklist"であるUIコンポーネント。
+		
+		サーバからのレスポンスにこの部分を更新するための
+		XMLデータが含まれる。
+		
+		また、このUIコンポーネントのすべての子コンポーネントは
+		更新対象に含まれる。
+	 -->
+	<h:dataTable id="booklist" value="#{bookControllerWithAjax.bookList}"
+		var="bk" border="1">
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="ISBN" />
+			</f:facet>
+			<h:outputText value="#{bk.isbn}" />
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="Title" />
+			</f:facet>
+			<h:outputText value="#{bk.title}" />
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="Price" />
+			</f:facet>
+			<h:outputText value="#{bk.price}" />
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="Description" />
+			</f:facet>
+			<h:outputText value="#{bk.description}" />
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="Number Of Pages" />
+			</f:facet>
+			<h:outputText value="#{bk.nbOfPage}" />
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="Illustrations" />
+			</f:facet>
+			<h:outputText value="#{bk.illustrations}" />
+		</h:column>
+
+	</h:dataTable>
+
+	<i>APress - Beginning Java EE 6</i>
+</h:body>
+</html>
